@@ -1,27 +1,16 @@
-from enum import Enum
 from pydantic import BaseModel
 
 
-class CategoryEnum(str, Enum):
-    flight = "flight"
-    hotel = "hotel"
-    activity = "activity"
-    restaurant = "restaurant"
-    hidden_gem = "hidden_gem"
-
-
-class StatusEnum(str, Enum):
-    planned = "planned"
-    booked = "booked"
-    completed = "completed"
-
-
 class Trip(BaseModel):
-    title: str
-    category: CategoryEnum
-    date: str
-    status: StatusEnum
-    notes: str
+    country: str
+    predicted_price: float
+    highest_point: int
+    total_slope: int
+    gondola_lifts: int
+    lift_capacity: int
+    snowparks: str
+    night_ski: str
+    notes: str | None = None
 
 
 class TripResponse(Trip):
