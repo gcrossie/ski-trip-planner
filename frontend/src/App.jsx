@@ -1,136 +1,72 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 
 function App() {
-  const [trips, setTrips] = useState([]);
-  const [formData, setFormData] = useState({
-    title: "",
-    category: "flight",
-    date: "",
-    status: "planned",
-    notes: "",
+  const [form, setForm] = useState({
+    Country: "Switzerland",
+    HighestPoint: 3000,
+    LowestPoint: 1000,
+    BeginnerSlope: 30,
+    IntermediateSlope: 60,
+    DifficultSlope: 20,
+    TotalSlope: 110,
+    Snowparks: "Yes",
+    NightSki: "No",
+    SurfaceLifts: 8,
+    ChairLifts: 10,
+    GondolaLifts: 5,
+    TotalLifts: 23,
+    LiftCapacity: 40000,
+    SnowCannons: 150,
   });
 
-  const fetchTrips = () => {
-    fetch("http://127.0.0.1:8000/trips")
-      .then((res) => res.json())
-      .then((data) => setTrips(data))
-      .catch((err) => console.error(err));
-  };
-
-  useEffect(() => {
-    fetchTrips();
-  }, []);
+  const [prediction, setPrediction] = useState(null);
 
   const handleChange = (e) => {
-    setFormData({
-      ...formData,
-      [e.target.name]: e.target.value,
+    const { name, value } = e.target;
+
+    setForm({
+      ...form,
+      [name]:
+        name === "Country" || name === "Snowparks" || name === "NightSki"
+          ? value
+          : Number(value),
     });
   };
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-
-    fetch("http://127.0.0.1:8000/trips", {
+  const handlePredict = async () => {
+    const response = await fetch("http://127.0.0.1:8000/predict", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify(formData),
-    })
-      .then((res) => res.json())
-      .then(() => {
-        fetchTrips();
-        setFormData({
-          title: "",
-          category: "flight",
-          date: "",
-          status: "planned",
-          notes: "",
-        });
-      })
-      .catch((err) => console.error(err));
+      body: JSON.stringify(form),
+    });
+
+    const data = await response.json();
+    setPrediction(data.predicted_day_pass_price);
   };
 
   return (
-    <div style={{ padding: "20px", maxWidth: "800px", margin: "0 auto" }}>
-      <h1>Travel Planner ✈️</h1>
+    <div>
+      <h1>Ski Trip Planner</h1>
 
-      <form onSubmit={handleSubmit} style={{ marginBottom: "30px" }}>
-        <input
-          type="text"
-          name="title"
-          placeholder="Title"
-          value={formData.title}
-          onChange={handleChange}
-          style={{ display: "block", marginBottom: "10px", width: "100%", padding: "8px" }}
-        />
+      {Object.entries(form).map(([key, value]) => (
+        <div key={key}>
+          <label>{key}</label>
+          <input
+            name={key}
+            value={value}
+            onChange={handleChange}
+          />
+        </div>
+      ))}
 
-        <select
-          name="category"
-          value={formData.category}
-          onChange={handleChange}
-          style={{ display: "block", marginBottom: "10px", width: "100%", padding: "8px" }}
-        >
-          <option value="flight">Flight</option>
-          <option value="hotel">Hotel</option>
-          <option value="activity">Activity</option>
-          <option value="restaurant">Restaurant</option>
-          <option value="hidden_gem">Hidden Gem</option>
-        </select>
+      <button onClick={handlePredict}>
+        Predict price
+      </button>
 
-        <input
-          type="date"
-          name="date"
-          value={formData.date}
-          onChange={handleChange}
-          style={{ display: "block", marginBottom: "10px", width: "100%", padding: "8px" }}
-        />
-
-        <select
-          name="status"
-          value={formData.status}
-          onChange={handleChange}
-          style={{ display: "block", marginBottom: "10px", width: "100%", padding: "8px" }}
-        >
-          <option value="planned">Planned</option>
-          <option value="booked">Booked</option>
-          <option value="completed">Completed</option>
-        </select>
-
-        <textarea
-          name="notes"
-          placeholder="Notes"
-          value={formData.notes}
-          onChange={handleChange}
-          style={{ display: "block", marginBottom: "10px", width: "100%", padding: "8px" }}
-        />
-
-        <button type="submit" style={{ padding: "10px 20px" }}>
-          Add Item
-        </button>
-      </form>
-
-      {trips.length === 0 ? (
-        <p>No trips yet...</p>
-      ) : (
-        trips.map((trip) => (
-          <div
-            key={trip.id}
-            style={{
-              border: "1px solid #ccc",
-              marginBottom: "15px",
-              padding: "15px",
-              borderRadius: "10px",
-            }}
-          >
-            <h2>{trip.title}</h2>
-            <p><strong>Category:</strong> {trip.category}</p>
-            <p><strong>Date:</strong> {trip.date}</p>
-            <p><strong>Status:</strong> {trip.status}</p>
-            <p><strong>Notes:</strong> {trip.notes}</p>
-          </div>
-        ))
+      {prediction !== null && (
+        <h2>Predicted day pass price: €{prediction}</h2>
       )}
     </div>
   );
