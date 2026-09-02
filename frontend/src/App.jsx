@@ -20,7 +20,7 @@ function App() {
   });
 
   const [prediction, setPrediction] = useState(null);
-  const [error, setError] = useState("");
+  const [error, setError] = useState([]);
   const [loading, setLoading] = useState(false);
 
   const [saveMessage, setSaveMessage] = useState("");
@@ -57,20 +57,82 @@ function App() {
     });
   };
 
+  const validateForm = () => {
+    const errors = [];
+
+    const numericValues = [
+      form.HighestPoint,
+      form.LowestPoint,
+      form.BeginnerSlope,
+      form.IntermediateSlope,
+      form.DifficultSlope,
+      form.TotalSlope,
+      form.SurfaceLifts,
+      form.ChairLifts,
+      form.GondolaLifts,
+      form.TotalLifts,
+      form.LiftCapacity,
+      form.SnowCannons,
+    ];
+
+    if (numericValues.some((value) => value < 0)) {
+      errors.push("Values cannot be negative.");
+    }
+
+    if (form.HighestPoint <= form.LowestPoint) {
+      errors.push("Highest point must be higher than lowest point.");
+    }
+
+    const slopeSum =
+      form.BeginnerSlope +
+      form.IntermediateSlope +
+      form.DifficultSlope;
+
+    if (form.TotalSlope < slopeSum) {
+      errors.push(
+        "Total slope cannot be smaller than the combined slopes."
+      );
+    }
+
+    const liftSum =
+      form.SurfaceLifts +
+      form.ChairLifts +
+      form.GondolaLifts;
+
+    if (form.TotalLifts < liftSum) {
+      errors.push(
+        "Total lifts cannot be smaller than the combined lifts."
+      );
+    }
+
+    return errors;
+  };
+
   const handlePredict = async () => {
+    const validationErrors = validateForm();
+
+    if (validationErrors.length > 0) {
+      setError(validationErrors);
+      setPrediction(null);
+      return;
+    }
+
     setLoading(true);
-    setError("");
+    setError([]);
     setPrediction(null);
     setSaveMessage("");
 
     try {
-      const response = await fetch("http://127.0.0.1:8000/predict", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(form),
-      });
+      const response = await fetch(
+        "http://127.0.0.1:8000/predict",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(form),
+        }
+      );
 
       if (!response.ok) {
         throw new Error("Prediction failed");
@@ -79,7 +141,9 @@ function App() {
       const data = await response.json();
       setPrediction(data.predicted_day_pass_price);
     } catch (err) {
-      setError("Could not calculate the price. Please try again.");
+      setError([
+        "Could not calculate the price. Please try again.",
+      ]);
     } finally {
       setLoading(false);
     }
@@ -95,29 +159,41 @@ function App() {
     setSaveMessage("");
 
     try {
-      const response = await fetch("http://127.0.0.1:8000/trips", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          country: form.Country,
-          predicted_price: prediction,
-          highest_point: form.HighestPoint,
-          total_slope: form.TotalSlope,
-          gondola_lifts: form.GondolaLifts,
-          lift_capacity: form.LiftCapacity,
-          snowparks: form.Snowparks,
-          night_ski: form.NightSki,
-          notes: null,
-        }),
-      });
+      const response = await fetch(
+        "http://127.0.0.1:8000/trips",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            country: form.Country,
+            predicted_price: prediction,
+            highest_point: form.HighestPoint,
+            total_slope: form.TotalSlope,
+            gondola_lifts: form.GondolaLifts,
+            lift_capacity: form.LiftCapacity,
+            snowparks: form.Snowparks,
+            night_ski: form.NightSki,
+            notes: null,
+          }),
+        }
+      );
 
       if (!response.ok) {
         throw new Error("Save failed");
       }
 
+      const savedTrip = await response.json();
+
       setSaveMessage("Trip saved.");
+
+      if (tripsVisible) {
+        setTrips((currentTrips) => [
+          ...currentTrips,
+          savedTrip,
+        ]);
+      }
     } catch (err) {
       setSaveMessage("Could not save trip.");
     } finally {
@@ -132,9 +208,12 @@ function App() {
     }
 
     setTripsLoading(true);
+    setError([]);
 
     try {
-      const response = await fetch("http://127.0.0.1:8000/trips");
+      const response = await fetch(
+        "http://127.0.0.1:8000/trips"
+      );
 
       if (!response.ok) {
         throw new Error("Could not load trips");
@@ -145,13 +224,15 @@ function App() {
       setTrips(data);
       setTripsVisible(true);
     } catch (err) {
-      setError("Could not load saved trips.");
+      setError(["Could not load saved trips."]);
     } finally {
       setTripsLoading(false);
     }
   };
 
   const handleDeleteTrip = async (tripId) => {
+    setError([]);
+
     try {
       const response = await fetch(
         `http://127.0.0.1:8000/trips/${tripId}`,
@@ -164,9 +245,13 @@ function App() {
         throw new Error("Delete failed");
       }
 
-      setTrips(trips.filter((trip) => trip.id !== tripId));
+      setTrips((currentTrips) =>
+        currentTrips.filter(
+          (trip) => trip.id !== tripId
+        )
+      );
     } catch (err) {
-      setError("Could not delete trip.");
+      setError(["Could not delete trip."]);
     }
   };
 
@@ -176,13 +261,17 @@ function App() {
 
       <div>
         <label>Country</label>
+
         <select
           name="Country"
           value={form.Country}
           onChange={handleChange}
         >
           {countries.map((country) => (
-            <option key={country} value={country}>
+            <option
+              key={country}
+              value={country}
+            >
               {country}
             </option>
           ))}
@@ -191,8 +280,10 @@ function App() {
 
       <div>
         <label>Highest point</label>
+
         <input
           type="number"
+          min="0"
           name="HighestPoint"
           value={form.HighestPoint}
           onChange={handleChange}
@@ -201,8 +292,10 @@ function App() {
 
       <div>
         <label>Lowest point</label>
+
         <input
           type="number"
+          min="0"
           name="LowestPoint"
           value={form.LowestPoint}
           onChange={handleChange}
@@ -211,8 +304,10 @@ function App() {
 
       <div>
         <label>Beginner slope</label>
+
         <input
           type="number"
+          min="0"
           name="BeginnerSlope"
           value={form.BeginnerSlope}
           onChange={handleChange}
@@ -221,8 +316,10 @@ function App() {
 
       <div>
         <label>Intermediate slope</label>
+
         <input
           type="number"
+          min="0"
           name="IntermediateSlope"
           value={form.IntermediateSlope}
           onChange={handleChange}
@@ -231,8 +328,10 @@ function App() {
 
       <div>
         <label>Difficult slope</label>
+
         <input
           type="number"
+          min="0"
           name="DifficultSlope"
           value={form.DifficultSlope}
           onChange={handleChange}
@@ -241,8 +340,10 @@ function App() {
 
       <div>
         <label>Total slope</label>
+
         <input
           type="number"
+          min="0"
           name="TotalSlope"
           value={form.TotalSlope}
           onChange={handleChange}
@@ -251,6 +352,7 @@ function App() {
 
       <div>
         <label>Snowpark</label>
+
         <select
           name="Snowparks"
           value={form.Snowparks}
@@ -263,6 +365,7 @@ function App() {
 
       <div>
         <label>Night skiing</label>
+
         <select
           name="NightSki"
           value={form.NightSki}
@@ -275,8 +378,10 @@ function App() {
 
       <div>
         <label>Surface lifts</label>
+
         <input
           type="number"
+          min="0"
           name="SurfaceLifts"
           value={form.SurfaceLifts}
           onChange={handleChange}
@@ -285,8 +390,10 @@ function App() {
 
       <div>
         <label>Chair lifts</label>
+
         <input
           type="number"
+          min="0"
           name="ChairLifts"
           value={form.ChairLifts}
           onChange={handleChange}
@@ -295,8 +402,10 @@ function App() {
 
       <div>
         <label>Gondola lifts</label>
+
         <input
           type="number"
+          min="0"
           name="GondolaLifts"
           value={form.GondolaLifts}
           onChange={handleChange}
@@ -305,8 +414,10 @@ function App() {
 
       <div>
         <label>Total lifts</label>
+
         <input
           type="number"
+          min="0"
           name="TotalLifts"
           value={form.TotalLifts}
           onChange={handleChange}
@@ -315,8 +426,10 @@ function App() {
 
       <div>
         <label>Lift capacity</label>
+
         <input
           type="number"
+          min="0"
           name="LiftCapacity"
           value={form.LiftCapacity}
           onChange={handleChange}
@@ -325,26 +438,47 @@ function App() {
 
       <div>
         <label>Snow cannons</label>
+
         <input
           type="number"
+          min="0"
           name="SnowCannons"
           value={form.SnowCannons}
           onChange={handleChange}
         />
       </div>
 
-      <button onClick={handlePredict} disabled={loading}>
-        {loading ? "Calculating..." : "Estimate price"}
+      <button
+        onClick={handlePredict}
+        disabled={loading}
+      >
+        {loading
+          ? "Calculating..."
+          : "Estimate price"}
       </button>
 
-      {error && <p>{error}</p>}
+      {error.length > 0 && (
+        <div>
+          {error.map((message, index) => (
+            <p key={index}>{message}</p>
+          ))}
+        </div>
+      )}
 
       {prediction !== null && (
         <div>
-          <h2>Predicted day pass price: €{prediction}</h2>
+          <h2>
+            Predicted day pass price: €
+            {prediction}
+          </h2>
 
-          <button onClick={handleSaveTrip} disabled={saving}>
-            {saving ? "Saving..." : "Save trip"}
+          <button
+            onClick={handleSaveTrip}
+            disabled={saving}
+          >
+            {saving
+              ? "Saving..."
+              : "Save trip"}
           </button>
         </div>
       )}
@@ -353,7 +487,10 @@ function App() {
 
       <hr />
 
-      <button onClick={handleShowTrips} disabled={tripsLoading}>
+      <button
+        onClick={handleShowTrips}
+        disabled={tripsLoading}
+      >
         {tripsLoading
           ? "Loading..."
           : tripsVisible
@@ -372,15 +509,46 @@ function App() {
               <div key={trip.id}>
                 <h3>{trip.country}</h3>
 
-                <p>Predicted price: €{trip.predicted_price}</p>
-                <p>Highest point: {trip.highest_point} m</p>
-                <p>Total slope: {trip.total_slope} km</p>
-                <p>Gondola lifts: {trip.gondola_lifts}</p>
-                <p>Lift capacity: {trip.lift_capacity}</p>
-                <p>Snowpark: {trip.snowparks}</p>
-                <p>Night skiing: {trip.night_ski}</p>
+                <p>
+                  Predicted price: €
+                  {trip.predicted_price}
+                </p>
 
-                <button onClick={() => handleDeleteTrip(trip.id)}>
+                <p>
+                  Highest point:{" "}
+                  {trip.highest_point} m
+                </p>
+
+                <p>
+                  Total slope:{" "}
+                  {trip.total_slope} km
+                </p>
+
+                <p>
+                  Gondola lifts:{" "}
+                  {trip.gondola_lifts}
+                </p>
+
+                <p>
+                  Lift capacity:{" "}
+                  {trip.lift_capacity}
+                </p>
+
+                <p>
+                  Snowpark:{" "}
+                  {trip.snowparks}
+                </p>
+
+                <p>
+                  Night skiing:{" "}
+                  {trip.night_ski}
+                </p>
+
+                <button
+                  onClick={() =>
+                    handleDeleteTrip(trip.id)
+                  }
+                >
                   Delete
                 </button>
 
