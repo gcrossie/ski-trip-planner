@@ -1,16 +1,18 @@
 # Ski Trip Planner
 
-Ski Trip Planner is a machine learning project that predicts the adult day pass price of European ski resorts based on resort characteristics.
+Ski Trip Planner is a machine learning project that predicts the adult day pass price of European ski resorts.
 
-The project covers the complete machine learning workflow, including data preparation, exploratory data analysis, supervised learning, unsupervised learning, model evaluation, hyperparameter tuning and model deployment.
+The project includes the main parts of a machine learning workflow: data cleaning, exploratory data analysis, model training, evaluation, unsupervised learning, hyperparameter tuning and deployment.
 
-The final machine learning model is connected to a web application built with React and FastAPI.
+The final model is connected to a web application built with React and FastAPI.
 
 ---
 
 ## Project Goal
 
-The goal of the project is to predict the adult day pass price of a ski resort based on characteristics such as:
+The goal of the project is to predict the adult day pass price of a ski resort based on information about the resort.
+
+The input features include:
 
 - Country
 - Highest and lowest elevation
@@ -39,9 +41,7 @@ The project uses the dataset:
 
 `European_Ski_Resorts.csv`
 
-The dataset contains information about European ski resorts, including mountain characteristics, slope infrastructure, lift infrastructure and adult day pass prices.
-
-The project focuses on ski resorts from:
+I focused on ski resorts from:
 
 - Andorra
 - Austria
@@ -54,92 +54,74 @@ The project focuses on ski resorts from:
 - Sweden
 - Switzerland
 
-Rows where the adult day pass price was equal to zero were removed because they were not useful for training the regression models.
+Rows where the adult day pass price was 0 were removed before modelling.
 
-The dataset was also checked for:
+I also checked the dataset for missing values and duplicated rows.
 
-- Missing values
-- Duplicated rows
-
-No missing values or duplicated rows were found in the final dataset used for modelling.
+No missing values or duplicated rows were found in the final dataset.
 
 ---
 
 ## Exploratory Data Analysis
 
-Exploratory Data Analysis was performed to better understand the dataset and identify relationships between resort characteristics and day pass prices.
+I used exploratory data analysis to understand the dataset and look for patterns that could be useful for the prediction task.
 
 The analysis included:
 
 - Descriptive statistics
 - Distribution of adult day pass prices
 - Average day pass price by country
-- Highest point vs day pass price
-- Total slope length vs day pass price
-- Total number of lifts vs day pass price
-- Lift capacity vs day pass price
+- Highest point compared with day pass price
+- Total slope length compared with day pass price
+- Total lifts compared with day pass price
+- Lift capacity compared with day pass price
 - Correlation analysis
-- Analysis of categorical variables such as snowparks and night skiing
+- Snowparks and night skiing values
 
 ---
 
 ## Data Preprocessing
 
-The feature data contains both numerical and categorical variables.
+The dataset contains both numerical and categorical features.
 
-Categorical features:
+The categorical features are:
 
 - Country
 - Snowparks
 - NightSki
 
-These variables are transformed using:
+These are transformed with:
 
 `OneHotEncoder(handle_unknown="ignore")`
 
-The remaining numerical features are passed to the machine learning models through a Scikit-learn preprocessing pipeline.
+The preprocessing is included in Scikit-learn pipelines so that the same transformations are used both during training and when new predictions are made.
 
-For Ridge Regression, numerical features were also standardized using `StandardScaler`.
-
-Using pipelines ensures that the same preprocessing steps are applied during both training and prediction.
+For Ridge Regression, the numerical features were also scaled with `StandardScaler`.
 
 ---
 
-## Machine Learning Models
+## Models
 
-Several regression models were trained and compared.
+I tested several regression models:
 
-### Baseline
+- Dummy Regressor
+- Ridge Regression
+- Random Forest Regressor
+- Gradient Boosting Regressor
 
-A `DummyRegressor` was used as a baseline model.
-
-Its purpose was to provide a simple reference point for evaluating whether the machine learning models actually learned meaningful patterns from the data.
-
-### Ridge Regression
-
-Ridge Regression was tested as a regularized linear regression model.
-
-### Random Forest Regressor
-
-Random Forest was used as a non-linear ensemble learning model.
-
-### Gradient Boosting Regressor
-
-Gradient Boosting was also tested as an ensemble learning method.
-
-It achieved the best performance among the tested supervised learning models.
+The Dummy Regressor was used as a baseline so I could compare the real models against a simple prediction method.
 
 ---
 
 ## Model Evaluation
 
-The regression models were evaluated using:
+The models were evaluated using:
 
-- MAE - Mean Absolute Error
-- RMSE - Root Mean Squared Error
-- R² - Coefficient of Determination
+- MAE
+- RMSE
+- R²
 
-The original test-set results were approximately:
+The test-set results were approximately:
 
 | Model | MAE | RMSE | R² |
 |---|---:|---:|---:|
@@ -148,15 +130,15 @@ The original test-set results were approximately:
 | Random Forest | 2.93 | 4.10 | 0.87 |
 | Gradient Boosting | **2.65** | **3.74** | **0.89** |
 
-Gradient Boosting achieved the lowest MAE and RMSE and the highest R² score.
+Gradient Boosting gave the best result on the test set.
 
 ---
 
 ## Cross-Validation
 
-To evaluate model performance more reliably, 5-fold cross-validation was also performed.
+I also used 5-fold cross-validation to check whether the models performed well across different splits of the data.
 
-Average cross-validation MAE was approximately:
+The average MAE was approximately:
 
 | Model | Mean CV MAE |
 |---|---:|
@@ -164,15 +146,15 @@ Average cross-validation MAE was approximately:
 | Random Forest | 4.11 |
 | Gradient Boosting | **4.02** |
 
-Gradient Boosting achieved the lowest average cross-validation MAE.
+Gradient Boosting had the lowest average MAE.
 
-It also showed relatively consistent performance across the different folds.
+This supported the result from the original train/test split.
 
 ---
 
 ## Hyperparameter Tuning
 
-`GridSearchCV` was used to test different Gradient Boosting hyperparameter combinations.
+I used `GridSearchCV` to test different Gradient Boosting settings.
 
 The best parameters were:
 
@@ -187,21 +169,21 @@ The tuned model achieved approximately:
 - RMSE: 3.74
 - R²: 0.89
 
-The tuning process confirmed that the original Gradient Boosting configuration was already well suited to the dataset.
+GridSearchCV did not find a better setup than the one I was already using, so I kept the same Gradient Boosting configuration.
 
 ---
 
 ## Unsupervised Learning
 
-K-Means clustering was used as an unsupervised learning method to explore patterns in the ski resorts without predefined labels.
+I also used K-Means clustering to explore the ski resorts without using predefined labels.
 
-The clustering identified three general groups:
+Three groups were identified:
 
 - Smaller ski resorts
 - Larger ski resorts
 - Very large ski resorts
 
-The groups differed in characteristics such as:
+The groups differed in features such as:
 
 - Highest point
 - Total slope length
@@ -210,38 +192,40 @@ The groups differed in characteristics such as:
 - Snow cannons
 - Adult day pass price
 
-The analysis showed that larger resorts with more infrastructure generally also had higher average day pass prices.
+The clustering showed that larger resorts with more infrastructure generally also had higher average day pass prices.
 
 ---
 
 ## Final Model
 
-Gradient Boosting was selected as the final machine learning model.
+Gradient Boosting was selected as the final model.
 
-The complete preprocessing and prediction pipeline was saved using Joblib as:
+The complete pipeline was saved with Joblib as:
 
 `ml/models/ski_pass_price_model.pkl`
 
-The saved pipeline allows the same preprocessing used during training to also be applied to new user input.
+The saved pipeline includes both preprocessing and the trained model.
 
 ---
 
 ## Web Application
 
-The trained machine learning model is used in the Ski Trip Planner web application.
-
-The application consists of:
+The trained model is used in the Ski Trip Planner web application.
 
 ### Frontend
+
+The frontend is built with:
 
 - React
 - Vite
 - JavaScript
 - CSS
 
-The user enters ski resort characteristics into a form and requests a predicted adult day pass price.
+The user enters ski resort information in a form and gets a predicted adult day pass price.
 
 ### Backend
+
+The backend is built with:
 
 - Python
 - FastAPI
@@ -249,19 +233,18 @@ The user enters ski resort characteristics into a form and requests a predicted 
 - SQLAlchemy
 - SQLite
 
-The backend receives the form data from React, loads the trained machine learning model and returns the predicted price.
+The backend receives the data from the frontend, sends it through the trained model and returns the prediction.
 
 ---
 
 ## Application Features
 
-The web application allows the user to:
+The application can:
 
-- Enter ski resort characteristics
 - Estimate an adult day pass price
 - Validate incorrect input values
 - Save predicted ski trips
-- View saved trips
+- Show saved trips
 - Delete saved trips
 
 ---
@@ -272,7 +255,7 @@ The web application allows the user to:
 
 `POST /predict`
 
-Receives ski resort characteristics and returns a predicted adult day pass price.
+Returns a predicted adult day pass price.
 
 ### Saved Trips
 
@@ -282,7 +265,7 @@ Returns saved ski trips.
 
 `POST /trips`
 
-Saves a ski trip and its predicted price.
+Saves a ski trip.
 
 `DELETE /trips/{trip_id}`
 
