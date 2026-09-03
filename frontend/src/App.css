@@ -423,9 +423,31 @@ button:disabled {
   background:
     linear-gradient(
       90deg,
-      #315a7d,
-      #4f7394
+      #0b3153,
+      #123f67
     );
+
+  box-shadow:
+    0 8px 20px rgba(11, 49, 83, 0.18);
+
+  transition:
+    background 0.2s ease,
+    transform 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.primary-button:hover {
+  background:
+    linear-gradient(
+      90deg,
+      #092b49,
+      #10385b
+    );
+
+  box-shadow:
+    0 10px 24px rgba(11, 49, 83, 0.24);
+
+  transform: translateY(-1px);
 }
 
 .secondary-button {
@@ -433,9 +455,13 @@ button:disabled {
 
   margin-top: 24px;
 
-  border: 1px solid rgba(49, 90, 125, 0.18);
+  border: 1px solid rgba(18, 63, 103, 0.18);
 
-  background: rgba(49, 90, 125, 0.82);
+  background: #123f67;
+}
+
+.secondary-button:hover {
+  background: #0d3457;
 }
 
 .text-button {
@@ -445,7 +471,7 @@ button:disabled {
 
   background: transparent;
 
-  color: #4f7394;
+  color: #315f87;
 
   font-size: 0.87rem;
 }
@@ -472,9 +498,10 @@ button:disabled {
 .result-label {
   margin: 0;
 
-  color: #425b70;
+  color: #2f4a61;
 
   font-size: 0.9rem;
+  font-weight: 600;
 }
 
 .price {
@@ -490,11 +517,12 @@ button:disabled {
 .result-description {
   margin: 12px 0 0;
 
-  color: var(--muted);
+  color: #465f73;
 
   line-height: 1.55;
 
   font-size: 0.86rem;
+  font-weight: 500;
 }
 
 .empty-result {
@@ -502,16 +530,17 @@ button:disabled {
 
   padding: 22px;
 
-  border: 1px dashed var(--border);
+  border: 1px dashed rgba(30, 54, 75, 0.2);
   border-radius: 14px;
 
-  color: var(--muted);
+  color: #465f73;
 
   line-height: 1.6;
 
   font-size: 0.86rem;
+  font-weight: 500;
 
-  background: rgba(255, 255, 255, 0.24);
+  background: rgba(255, 255, 255, 0.36);
 }
 
 .empty-result p {
@@ -521,11 +550,12 @@ button:disabled {
 .save-message {
   margin: 12px 0 0;
 
-  color: #4f7394;
+  color: #315f87;
 
   text-align: center;
 
   font-size: 0.83rem;
+  font-weight: 500;
 }
 
 /* =========================
@@ -554,11 +584,13 @@ button:disabled {
 .model-note {
   margin: 18px 0 0;
 
-  color: var(--muted);
+  color: #3f586d;
 
   text-align: center;
 
-  font-size: 0.75rem;
+  font-size: 0.78rem;
+  font-weight: 500;
+  line-height: 1.5;
 }
 
 /* =========================
@@ -586,7 +618,7 @@ button:disabled {
 .empty-trips {
   padding: 22px 0 4px;
 
-  color: var(--muted);
+  color: #465f73;
 
   font-size: 0.86rem;
 }
@@ -618,7 +650,7 @@ button:disabled {
 .trip-main p {
   margin: 3px 0;
 
-  color: var(--muted);
+  color: #526a7d;
 
   font-size: 0.79rem;
 }
@@ -635,7 +667,7 @@ button:disabled {
 
   margin-top: 14px;
 
-  color: var(--muted);
+  color: #526a7d;
 
   font-size: 0.72rem;
 }
@@ -653,13 +685,14 @@ button:disabled {
 
   padding: 0 20px 45px;
 
-  color: #41586c;
+  color: #2f4a61;
 }
 
 .footer span {
-  color: var(--muted);
+  color: #465f73;
 
   font-size: 0.8rem;
+  font-weight: 500;
 }
 
 /* =========================
