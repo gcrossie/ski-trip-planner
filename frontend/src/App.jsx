@@ -1,4 +1,6 @@
 import { useState } from "react";
+import "./App.css";
+import heroImage from "./assets/ski-trip-planner1.jpg";
 
 function App() {
   const [form, setForm] = useState({
@@ -80,7 +82,9 @@ function App() {
     }
 
     if (form.HighestPoint <= form.LowestPoint) {
-      errors.push("Highest point must be higher than lowest point.");
+      errors.push(
+        "Highest point must be higher than lowest point."
+      );
     }
 
     const slopeSum =
@@ -256,308 +260,454 @@ function App() {
   };
 
   return (
-    <div>
-      <h1>Ski Trip Planner</h1>
+    <div className="app">
+      <header className="hero">
+        <img
+          src={heroImage}
+          alt="Snowy mountain landscape"
+          className="hero-image"
+        />
 
-      <div>
-        <label>Country</label>
+        <div className="hero-overlay"></div>
 
-        <select
-          name="Country"
-          value={form.Country}
-          onChange={handleChange}
-        >
-          {countries.map((country) => (
-            <option
-              key={country}
-              value={country}
+        <nav className="navbar">
+          <div className="brand">
+            <span className="brand-icon">△</span>
+            <span>Ski Trip Planner</span>
+          </div>
+
+          <div className="nav-links">
+            <a href="#planner">Planner</a>
+            <a href="#saved-trips">My Trips</a>
+            <a href="#about">About</a>
+          </div>
+        </nav>
+
+        <div className="hero-content">
+          <p className="eyebrow">
+            PLAN YOUR ADVENTURE
+          </p>
+
+          <h1>
+            Plan your
+            <br />
+            next ski trip
+          </h1>
+
+          <p className="hero-description">
+            Estimate day pass prices based on resort
+            features and mountain data.
+          </p>
+
+          <div className="hero-features">
+            <span>Accurate price prediction</span>
+            <span>Data-driven insights</span>
+            <span>Save trips for later</span>
+          </div>
+        </div>
+      </header>
+
+      <main id="planner" className="planner-section">
+        <div className="planner-layout">
+          <section className="form-card">
+            <div className="section-heading">
+              <p className="section-label">
+                RESORT DETAILS
+              </p>
+
+              <h2>Resort information</h2>
+
+              <p>
+                Enter the details of the ski resort to
+                estimate an adult day pass price.
+              </p>
+            </div>
+
+            <div className="form-group">
+              <h3>Destination</h3>
+
+              <div className="form-grid one-column">
+                <div className="field">
+                  <label>Country</label>
+
+                  <select
+                    name="Country"
+                    value={form.Country}
+                    onChange={handleChange}
+                  >
+                    {countries.map((country) => (
+                      <option
+                        key={country}
+                        value={country}
+                      >
+                        {country}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+              </div>
+            </div>
+
+            <div className="form-group">
+              <h3>Mountain</h3>
+
+              <div className="form-grid">
+                <div className="field">
+                  <label>Highest point (m)</label>
+                  <input
+                    type="number"
+                    min="0"
+                    name="HighestPoint"
+                    value={form.HighestPoint}
+                    onChange={handleChange}
+                  />
+                </div>
+
+                <div className="field">
+                  <label>Lowest point (m)</label>
+                  <input
+                    type="number"
+                    min="0"
+                    name="LowestPoint"
+                    value={form.LowestPoint}
+                    onChange={handleChange}
+                  />
+                </div>
+
+                <div className="field">
+                  <label>Total slope (km)</label>
+                  <input
+                    type="number"
+                    min="0"
+                    name="TotalSlope"
+                    value={form.TotalSlope}
+                    onChange={handleChange}
+                  />
+                </div>
+              </div>
+            </div>
+
+            <div className="form-group">
+              <h3>Slopes</h3>
+
+              <div className="form-grid">
+                <div className="field">
+                  <label>Beginner slope (km)</label>
+                  <input
+                    type="number"
+                    min="0"
+                    name="BeginnerSlope"
+                    value={form.BeginnerSlope}
+                    onChange={handleChange}
+                  />
+                </div>
+
+                <div className="field">
+                  <label>
+                    Intermediate slope (km)
+                  </label>
+                  <input
+                    type="number"
+                    min="0"
+                    name="IntermediateSlope"
+                    value={form.IntermediateSlope}
+                    onChange={handleChange}
+                  />
+                </div>
+
+                <div className="field">
+                  <label>Difficult slope (km)</label>
+                  <input
+                    type="number"
+                    min="0"
+                    name="DifficultSlope"
+                    value={form.DifficultSlope}
+                    onChange={handleChange}
+                  />
+                </div>
+              </div>
+            </div>
+
+            <div className="form-group">
+              <h3>Lifts</h3>
+
+              <div className="form-grid four-columns">
+                <div className="field">
+                  <label>Surface lifts</label>
+                  <input
+                    type="number"
+                    min="0"
+                    name="SurfaceLifts"
+                    value={form.SurfaceLifts}
+                    onChange={handleChange}
+                  />
+                </div>
+
+                <div className="field">
+                  <label>Chair lifts</label>
+                  <input
+                    type="number"
+                    min="0"
+                    name="ChairLifts"
+                    value={form.ChairLifts}
+                    onChange={handleChange}
+                  />
+                </div>
+
+                <div className="field">
+                  <label>Gondola lifts</label>
+                  <input
+                    type="number"
+                    min="0"
+                    name="GondolaLifts"
+                    value={form.GondolaLifts}
+                    onChange={handleChange}
+                  />
+                </div>
+
+                <div className="field">
+                  <label>Total lifts</label>
+                  <input
+                    type="number"
+                    min="0"
+                    name="TotalLifts"
+                    value={form.TotalLifts}
+                    onChange={handleChange}
+                  />
+                </div>
+              </div>
+
+              <div className="form-grid one-column">
+                <div className="field">
+                  <label>Lift capacity (p/h)</label>
+                  <input
+                    type="number"
+                    min="0"
+                    name="LiftCapacity"
+                    value={form.LiftCapacity}
+                    onChange={handleChange}
+                  />
+                </div>
+              </div>
+            </div>
+
+            <div className="form-group">
+              <h3>Extras</h3>
+
+              <div className="form-grid">
+                <div className="field">
+                  <label>Snowpark</label>
+                  <select
+                    name="Snowparks"
+                    value={form.Snowparks}
+                    onChange={handleChange}
+                  >
+                    <option value="Yes">
+                      Yes
+                    </option>
+                    <option value="No">
+                      No
+                    </option>
+                  </select>
+                </div>
+
+                <div className="field">
+                  <label>Night skiing</label>
+                  <select
+                    name="NightSki"
+                    value={form.NightSki}
+                    onChange={handleChange}
+                  >
+                    <option value="Yes">
+                      Yes
+                    </option>
+                    <option value="No">
+                      No
+                    </option>
+                  </select>
+                </div>
+
+                <div className="field">
+                  <label>Snow cannons</label>
+                  <input
+                    type="number"
+                    min="0"
+                    name="SnowCannons"
+                    value={form.SnowCannons}
+                    onChange={handleChange}
+                  />
+                </div>
+              </div>
+            </div>
+
+            {error.length > 0 && (
+              <div className="error-box">
+                {error.map((message, index) => (
+                  <p key={index}>{message}</p>
+                ))}
+              </div>
+            )}
+
+            <button
+              className="primary-button"
+              onClick={handlePredict}
+              disabled={loading}
             >
-              {country}
-            </option>
-          ))}
-        </select>
-      </div>
+              {loading
+                ? "Calculating..."
+                : "Estimate day pass price"}
+            </button>
 
-      <div>
-        <label>Highest point</label>
+            <p className="model-note">
+              Prediction based on historical resort data
+              and a machine learning model.
+            </p>
+          </section>
 
-        <input
-          type="number"
-          min="0"
-          name="HighestPoint"
-          value={form.HighestPoint}
-          onChange={handleChange}
-        />
-      </div>
+          <aside className="sidebar">
+            <section className="result-card">
+              <p className="result-label">
+                Estimated day pass price
+              </p>
 
-      <div>
-        <label>Lowest point</label>
+              {prediction !== null ? (
+                <>
+                  <div className="price">
+                    €{prediction}
+                  </div>
 
-        <input
-          type="number"
-          min="0"
-          name="LowestPoint"
-          value={form.LowestPoint}
-          onChange={handleChange}
-        />
-      </div>
+                  <p className="result-description">
+                    Estimated adult day pass price based
+                    on the resort information you entered.
+                  </p>
 
-      <div>
-        <label>Beginner slope</label>
+                  <button
+                    className="secondary-button"
+                    onClick={handleSaveTrip}
+                    disabled={saving}
+                  >
+                    {saving
+                      ? "Saving..."
+                      : "Save this trip"}
+                  </button>
 
-        <input
-          type="number"
-          min="0"
-          name="BeginnerSlope"
-          value={form.BeginnerSlope}
-          onChange={handleChange}
-        />
-      </div>
+                  {saveMessage && (
+                    <p className="save-message">
+                      {saveMessage}
+                    </p>
+                  )}
+                </>
+              ) : (
+                <div className="empty-result">
+                  <p>
+                    Fill in the resort details and click
+                    estimate to see a predicted price.
+                  </p>
+                </div>
+              )}
+            </section>
 
-      <div>
-        <label>Intermediate slope</label>
-
-        <input
-          type="number"
-          min="0"
-          name="IntermediateSlope"
-          value={form.IntermediateSlope}
-          onChange={handleChange}
-        />
-      </div>
-
-      <div>
-        <label>Difficult slope</label>
-
-        <input
-          type="number"
-          min="0"
-          name="DifficultSlope"
-          value={form.DifficultSlope}
-          onChange={handleChange}
-        />
-      </div>
-
-      <div>
-        <label>Total slope</label>
-
-        <input
-          type="number"
-          min="0"
-          name="TotalSlope"
-          value={form.TotalSlope}
-          onChange={handleChange}
-        />
-      </div>
-
-      <div>
-        <label>Snowpark</label>
-
-        <select
-          name="Snowparks"
-          value={form.Snowparks}
-          onChange={handleChange}
-        >
-          <option value="Yes">Yes</option>
-          <option value="No">No</option>
-        </select>
-      </div>
-
-      <div>
-        <label>Night skiing</label>
-
-        <select
-          name="NightSki"
-          value={form.NightSki}
-          onChange={handleChange}
-        >
-          <option value="Yes">Yes</option>
-          <option value="No">No</option>
-        </select>
-      </div>
-
-      <div>
-        <label>Surface lifts</label>
-
-        <input
-          type="number"
-          min="0"
-          name="SurfaceLifts"
-          value={form.SurfaceLifts}
-          onChange={handleChange}
-        />
-      </div>
-
-      <div>
-        <label>Chair lifts</label>
-
-        <input
-          type="number"
-          min="0"
-          name="ChairLifts"
-          value={form.ChairLifts}
-          onChange={handleChange}
-        />
-      </div>
-
-      <div>
-        <label>Gondola lifts</label>
-
-        <input
-          type="number"
-          min="0"
-          name="GondolaLifts"
-          value={form.GondolaLifts}
-          onChange={handleChange}
-        />
-      </div>
-
-      <div>
-        <label>Total lifts</label>
-
-        <input
-          type="number"
-          min="0"
-          name="TotalLifts"
-          value={form.TotalLifts}
-          onChange={handleChange}
-        />
-      </div>
-
-      <div>
-        <label>Lift capacity</label>
-
-        <input
-          type="number"
-          min="0"
-          name="LiftCapacity"
-          value={form.LiftCapacity}
-          onChange={handleChange}
-        />
-      </div>
-
-      <div>
-        <label>Snow cannons</label>
-
-        <input
-          type="number"
-          min="0"
-          name="SnowCannons"
-          value={form.SnowCannons}
-          onChange={handleChange}
-        />
-      </div>
-
-      <button
-        onClick={handlePredict}
-        disabled={loading}
-      >
-        {loading
-          ? "Calculating..."
-          : "Estimate price"}
-      </button>
-
-      {error.length > 0 && (
-        <div>
-          {error.map((message, index) => (
-            <p key={index}>{message}</p>
-          ))}
-        </div>
-      )}
-
-      {prediction !== null && (
-        <div>
-          <h2>
-            Predicted day pass price: €
-            {prediction}
-          </h2>
-
-          <button
-            onClick={handleSaveTrip}
-            disabled={saving}
-          >
-            {saving
-              ? "Saving..."
-              : "Save trip"}
-          </button>
-        </div>
-      )}
-
-      {saveMessage && <p>{saveMessage}</p>}
-
-      <hr />
-
-      <button
-        onClick={handleShowTrips}
-        disabled={tripsLoading}
-      >
-        {tripsLoading
-          ? "Loading..."
-          : tripsVisible
-          ? "Hide saved trips"
-          : "Show saved trips"}
-      </button>
-
-      {tripsVisible && (
-        <div>
-          <h2>Saved trips</h2>
-
-          {trips.length === 0 ? (
-            <p>No saved trips yet.</p>
-          ) : (
-            trips.map((trip) => (
-              <div key={trip.id}>
-                <h3>{trip.country}</h3>
-
-                <p>
-                  Predicted price: €
-                  {trip.predicted_price}
-                </p>
-
-                <p>
-                  Highest point:{" "}
-                  {trip.highest_point} m
-                </p>
-
-                <p>
-                  Total slope:{" "}
-                  {trip.total_slope} km
-                </p>
-
-                <p>
-                  Gondola lifts:{" "}
-                  {trip.gondola_lifts}
-                </p>
-
-                <p>
-                  Lift capacity:{" "}
-                  {trip.lift_capacity}
-                </p>
-
-                <p>
-                  Snowpark:{" "}
-                  {trip.snowparks}
-                </p>
-
-                <p>
-                  Night skiing:{" "}
-                  {trip.night_ski}
-                </p>
+            <section
+              id="saved-trips"
+              className="saved-card"
+            >
+              <div className="saved-header">
+                <div>
+                  <p className="section-label">
+                    YOUR PLANS
+                  </p>
+                  <h2>Saved trips</h2>
+                </div>
 
                 <button
-                  onClick={() =>
-                    handleDeleteTrip(trip.id)
-                  }
+                  className="text-button"
+                  onClick={handleShowTrips}
+                  disabled={tripsLoading}
                 >
-                  Delete
+                  {tripsLoading
+                    ? "Loading..."
+                    : tripsVisible
+                    ? "Hide"
+                    : "Show"}
                 </button>
-
-                <hr />
               </div>
-            ))
-          )}
+
+              {tripsVisible && (
+                <div className="saved-list">
+                  {trips.length === 0 ? (
+                    <p className="empty-trips">
+                      No saved trips yet.
+                    </p>
+                  ) : (
+                    trips.map((trip) => (
+                      <article
+                        className="trip-item"
+                        key={trip.id}
+                      >
+                        <div className="trip-main">
+                          <div>
+                            <h3>
+                              {trip.country}
+                            </h3>
+
+                            <p>
+                              Highest point:{" "}
+                              {trip.highest_point} m
+                            </p>
+
+                            <p>
+                              Total slope:{" "}
+                              {trip.total_slope} km
+                            </p>
+                          </div>
+
+                          <strong>
+                            €
+                            {trip.predicted_price}
+                          </strong>
+                        </div>
+
+                        <div className="trip-details">
+                          <span>
+                            Gondola lifts:{" "}
+                            {trip.gondola_lifts}
+                          </span>
+
+                          <span>
+                            Snowpark:{" "}
+                            {trip.snowparks}
+                          </span>
+
+                          <span>
+                            Night skiing:{" "}
+                            {trip.night_ski}
+                          </span>
+                        </div>
+
+                        <button
+                          className="delete-button"
+                          onClick={() =>
+                            handleDeleteTrip(
+                              trip.id
+                            )
+                          }
+                        >
+                          Delete
+                        </button>
+                      </article>
+                    ))
+                  )}
+                </div>
+              )}
+            </section>
+          </aside>
         </div>
-      )}
+      </main>
+
+      <footer id="about" className="footer">
+        <strong>Ski Trip Planner</strong>
+        <span>Plan better. Ski more.</span>
+      </footer>
     </div>
   );
 }
